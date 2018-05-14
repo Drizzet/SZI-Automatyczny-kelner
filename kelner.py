@@ -13,7 +13,7 @@ krataY = 0
 clock = pygame.time.Clock()
 
 ### jednostka: 1 - przejście o 1 kratkę; początkowa kratka to kratka (0, 0)
-### indeksowanie kratek: góra/lewo: (0, 0); dół/prawo: (rozmiar - 1, rozmiar - 1)
+### indeksowanie kratek: lewo/góra: (0, 0); prawo/dół: (rozmiar - 1, rozmiar - 1)
 ### krata: 17x17
 j = -1
 obstacles = set([(0, 1), (0, 2), (0, 3), (0, 4), (1, 1), (1, 2), (1, 3), (1, 4)])
@@ -31,7 +31,6 @@ while not done:
             done = True
         if event.type == pygame.KEYDOWN and event.key == pygame.K_SPACE:
             is_blue = not is_blue
-
 
     if j>=0 and j < sol_len and (solution != None):
         x = solution[j]
@@ -98,6 +97,5 @@ while not done:
 
     if j < sol_len and (solution != None):
         time.sleep(0.5)
-        continue
 
     print(kelnerX,kelnerY)
