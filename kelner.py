@@ -15,6 +15,7 @@ clock = pygame.time.Clock()
 ### jednostka: 1 - przejście o 1 kratkę; początkowa kratka to kratka (0, 0)
 ### indeksowanie kratek: góra/lewo: (0, 0); dół/prawo: (rozmiar - 1, rozmiar - 1)
 ### krata: 17x17
+j = -1
 obstacles = set([(0, 1), (0, 2), (0, 3), (0, 4), (1, 1), (1, 2), (1, 3), (1, 4)])
 r = PlanRoute((0, 0), (0, 5), obstacles, 17)
 solution = None
@@ -23,16 +24,15 @@ if (astar_search(r) != None):
     solution = astar_search(r).solution()
     sol_len = solution.__len__()
     print(solution)
-j = -1
 
 while not done:
-    j = j + 1
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             done = True
         if event.type == pygame.KEYDOWN and event.key == pygame.K_SPACE:
             is_blue = not is_blue
 
+    j = j + 1
     if j < sol_len and (solution != None):
         x = solution[j]
         if x == "UP":
@@ -55,7 +55,6 @@ while not done:
     for i in range(0,85):
         pygame.draw.line(screen,(0,0,0),(krataX+i*50,0),(krataX+i*50,850),1)
         pygame.draw.line(screen,(0,0,0), (0,krataY+i*50),(850, krataY+i*50), 1)
-
 
     pygame.draw.rect(screen, (255, 0, 0) , pygame.Rect(0, 50, 100, 200))
     pygame.draw.rect(screen, (200, 200, 0), pygame.Rect(0, 600, 100, 200))

@@ -1,13 +1,46 @@
-from utils import (
-    is_in, memoize, PriorityQueue
-)
+import heapq
+
+class PriorityQueue:
+    """ Kolejka priorytetowa, w której minimalny element
+        (wynik determinuje funkcja f i kolejność) jako pierwszy. """
+    def __init__(self, f=lambda x: x):
+        self.heap = []
+        self.f = f
+
+    def append(self, item):
+        """ Wstawianie elementu na odpowiedniej pozycji. """
+        heapq.heappush(self.heap, (self.f(item), item))
+
+    def pop(self):
+        """ Zwrócenie elementu z najmniejszą wartością funkcji f (uwzględniając kolejność). """
+        if self.heap:
+            return heapq.heappop(self.heap)[1]
+        else:
+            raise Exception('Trying to pop from empty PriorityQueue.')
+
+    def __len__(self):
+        """ Zwrócenie aktualnej długości kolejki. """
+        return len(self.heap)
+
+    def __contains__(self, item):
+        """ Zwraca wartość True jeśli element jest w kolejce. """
+        return (self.f(item), item) in self.heap
+
+    def __getitem__(self, key):
+        """ Pobranie konkretnego elementu. """
+        for _, item in self.heap:
+            if item == key:
+                return item
+
+    def __delitem__(self, key):
+        """ Usunięcie pierwszego wystąpienia klucza. """
+        self.heap.remove((self.f(key), key))
+        heapq.heapify(self.heap)
 
 class Node:
-    """ Węzeł w drzewie wyszukiwań. Zawiera odniesienie do węzła rodzica i aktualnego stanu. """
-
+    """ Węzeł w grafie wyszukiwań. Zawiera odniesienie do węzła rodzica i aktualnego stanu. """
     def __init__(self, state, parent=None, action=None, path_cost=0):
         """ Tworzenie węzła na podstawie rodzica i akcji. """
-
         self.state = state
         self.parent = parent
         self.action = action
@@ -21,13 +54,11 @@ class Node:
 
     def expand(self, problem):
         """ Zwraca listę węzłów dostępnych w jednym kroku od węzła. """
-
         return [self.child_node(problem, action)
                 for action in problem.actions(self.state)]
 
     def child_node(self, problem, action):
         """ Zwraca węzeł potomny. """
-
         next_node = problem.result(self.state, action)
         return Node(next_node, self, action,
                     problem.path_cost(self.path_cost, self.state,
@@ -35,12 +66,10 @@ class Node:
 
     def solution(self):
         """ Zwraca sekwencję akcji jak dojść z korzenia do danego węzła. """
-
         return [node.action for node in self.path()[1:]]
 
     def path(self):
         """ Zwraca listę węzłów tworzących ścieżkę z korzenia do danego węzła. """
-
         node, path_back = self, []
         while node:
             path_back.append(node)
@@ -49,13 +78,12 @@ class Node:
 
 def best_first_graph_search(problem, f):
     """ Algorytm znajduje węzły w kolejności od najmniejszej wartości funkcji f. """
-
     node = Node(problem.initial)
     if problem.goal_test(node.state):
         return node
     if problem.goal in problem.obstacles:
         return None
-    frontier = PriorityQueue('min', f)
+    frontier = PriorityQueue(f)
     frontier.append(node)
     explored = set()
     while frontier:
@@ -73,27 +101,22 @@ def best_first_graph_search(problem, f):
                     frontier.append(child)
     return None
 
-def astar_search(problem, h=None):
+def astar_search(problem):
     """ Algorytm przeszukiwania A* - algorytm Greedy Best First Search na podstawie książki,
         gdzie f(n) = g(n) + h(n). Funkcja h(n) jest zaimplementowana w klasie problemu. """
-
-    h = memoize(h or problem.h, 'h')
+    h = problem.h
     return best_first_graph_search(problem, lambda n: n.path_cost + h(n))
 
 class PlanRoute():
     """ Definicja problemu ruchu agenta po kracie. """
-
     def __init__(self, initial, goal, obstacles, dimrow):
         """ Zdefiniowanie stanu początkowego i stanu akceptującego oraz wielkość kraty i zbiór punktów-przeszkód. """
-
         self.initial = initial
         self.dimrow = dimrow
         self.goal = goal
         self.obstacles = obstacles
-
     def actions(self, state):
         """ Zwraca wszystkie akcje, które mogą być wykonane w danym stanie. """
-
         possible_actions = ['UP', 'LEFT', 'DOWN', 'RIGHT']
         x = state[0]
         y = state[1]
@@ -116,7 +139,6 @@ class PlanRoute():
 
     def result(self, state, action):
         """ Dla danego stanu i akcji zwracany jest nowy stan, który jest wynikiem danej akcji. """
-
         x = state[0]
         y = state[1]
         proposed_loc = tuple()
@@ -141,24 +163,19 @@ class PlanRoute():
     def goal_test(self, state):
         """ Dla danego stanu zwraca wartość True jeśli stan jest stanem docelowym, 
             w przeciwnym wypadku zwraca wartość False. """
-
         return state == tuple(self.goal)
 
     def path_cost(self, c, state1, action, state2):
         """ Zwraca koszt przejścia ścieżki ze stanu state1 przez jakąś akcję do stanu state2,
             zakładając koszt c do osiągnięcia tego stanu. """
-        
         return c + 1
 
     def h(self, node):
-        """ Zwraca wartość heurystyki dla danego stanu. """
-
-        # Heurystyka Manhattan
+        """ Zwraca wartość heurystyki Manhattan dla danego stanu. """
         x1 = node.state[0]
         y1 = node.state[1]
         x2 = self.goal[0]
         y2 = self.goal[1]
-
         return abs(x2 - x1) + abs(y2 - y1)
 
 ### jednostka: 1 - przejście o 1 kratkę; początkowa kratka to kratka (0, 0)
