@@ -1,8 +1,8 @@
 import heapq
 
 class PriorityQueue:
-    """ Kolejka priorytetowa, w której minimalny element
-        (wynik determinuje funkcja f i kolejność) jako pierwszy. """
+    """ Kolejka priorytetowa, w której minimalny element (wynik
+        determinuje funkcja f i kolejność) zwracany jest jako pierwszy. """
     def __init__(self, f=lambda x: x):
         self.heap = []
         self.f = f
