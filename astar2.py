@@ -112,9 +112,10 @@ class PlanRoute():
     def __init__(self, initial, goal, obstacles, dimrow):
         """ Zdefiniowanie stanu początkowego i stanu akceptującego oraz wielkość kraty i zbiór punktów-przeszkód. """
         self.initial = initial
-        self.dimrow = dimrow
         self.goal = goal
         self.obstacles = obstacles
+        self.dimrow = dimrow
+
     def actions(self, state):
         """ Zwraca wszystkie akcje, które mogą być wykonane w danym stanie. """
         possible_actions = ['UP', 'LEFT', 'DOWN', 'RIGHT']
@@ -163,11 +164,11 @@ class PlanRoute():
     def goal_test(self, state):
         """ Dla danego stanu zwraca wartość True jeśli stan jest stanem docelowym, 
             w przeciwnym wypadku zwraca wartość False. """
-        return state == tuple(self.goal)
+        return state == self.goal
 
     def path_cost(self, c, state1, action, state2):
         """ Zwraca koszt przejścia ścieżki ze stanu state1 przez jakąś akcję do stanu state2,
-            zakładając koszt c do osiągnięcia tego stanu. """
+            zakładając koszt c do osiągnięcia stanu state1. """
         return c + 1
 
     def h(self, node):

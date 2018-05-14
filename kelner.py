@@ -32,8 +32,8 @@ while not done:
         if event.type == pygame.KEYDOWN and event.key == pygame.K_SPACE:
             is_blue = not is_blue
 
-    j = j + 1
-    if j < sol_len and (solution != None):
+
+    if j>=0 and j < sol_len and (solution != None):
         x = solution[j]
         if x == "UP":
             kelnerY -= 50
@@ -43,6 +43,7 @@ while not done:
             kelnerX -= 50
         if x == "RIGHT":
             kelnerX += 50
+    j = j + 1
 
     pressed = pygame.key.get_pressed()
     if pressed[pygame.K_UP]: kelnerY -= 50
