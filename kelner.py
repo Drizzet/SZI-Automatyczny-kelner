@@ -15,15 +15,28 @@ clock = pygame.time.Clock()
 ### jednostka: 1 - przejście o 1 kratkę; początkowa kratka to kratka (0, 0)
 ### indeksowanie kratek: lewo/góra: (0, 0); prawo/dół: (rozmiar - 1, rozmiar - 1)
 ### krata: 17x17
+
 j = -1
-obstacles = set([(0, 1), (0, 2), (0, 3), (0, 4), (1, 1), (1, 2), (1, 3), (1, 4)])
-r = PlanRoute((0, 0), (0, 5), obstacles, 17)
+size = 17
+wspKelnerX = 0
+wspKelnerY = 0
+wspX = 0
+wspY = 0
+obstacles = set([(7, 1), (8, 1), (12, 1), (13, 1), (7, 2), (8, 2),
+                (12, 2), (13, 2), (7, 3), (8, 3), (12, 3), (13,3),
+                (7, 7), (8, 7), (12, 7), (13, 7), (7, 8), (8, 8),
+                (12, 8), (13, 8), (7, 9), (8, 9), (12, 9), (13, 9),
+                (7, 13), (8, 13), (12, 13), (13, 13), (7, 14), (8, 14),
+                (12, 14), (13, 14), (7, 15), (8, 15), (12, 15),(13, 15)
+            ])
+
 solution = None
 sol_len = 0
-if (astar_search(r) != None):
+## r = PlanRoute((wspKelnerX, wspKelnerY), (wspX, wspY), obstacles, size)
+"""if (astar_search(r) != None):
     solution = astar_search(r).solution()
     sol_len = solution.__len__()
-    print(solution)
+    print(solution)"""
 
 while not done:
     for event in pygame.event.get():
@@ -31,6 +44,20 @@ while not done:
             done = True
         if event.type == pygame.KEYDOWN and event.key == pygame.K_SPACE:
             is_blue = not is_blue
+        if event.type == pygame.MOUSEBUTTONUP:
+            pos = pygame.mouse.get_pos()
+            wspX = pos[0] // 50
+            wspY = pos[1] // 50
+            wspKelnerX = kelnerX // 50
+            wspKelnerY = kelnerY // 50
+            if (wspX, wspY) not in obstacles:
+                j = 0
+                rClick = PlanRoute((wspKelnerX, wspKelnerY), (wspX, wspY), obstacles, size)
+                if (astar_search(rClick) != None):
+                    solution = astar_search(rClick).solution()
+                    sol_len = solution.__len__()
+                    print(solution)
+
 
     if j>=0 and j < sol_len and (solution != None):
         x = solution[j]
@@ -94,8 +121,3 @@ while not done:
 
     pygame.display.flip()
     clock.tick(15)
-
-    if j < sol_len and (solution != None):
-        time.sleep(0.5)
-
-    print(kelnerX,kelnerY)
