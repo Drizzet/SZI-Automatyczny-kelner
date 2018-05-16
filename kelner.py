@@ -1,9 +1,57 @@
 import pygame
-import time
 from astar2 import *
 
+j = -1
+
+size = 14 ### ile kratek w rzedzie/kolumnie
+m = 50 ## mnoznik 1 kratki na ekranie w px
+sizeWindow = size*m ### rozmiar okna w px
+
+waiterCoordsX = 0 ## polozenie X kelnera w jednostkach kratek
+waiterCoordsY = 0 ## polozenie Y kelnera w jednostkach kratek
+coordsX = 0 ## cel X w jednostkach kratek
+coordsY = 0 ## cel Y w jednostkach kratek
+
+### Pomieszczenia
+weWyX = 0
+weWyY = 2
+wcX = 0
+wcY = 6
+kuchniaX = 0
+kuchniaY = 10
+rooms = set([(weWyX, weWyY), (wcX, wcY), (kuchniaX, kuchniaY)])
+
+### Stoliki - I rzad
+desksI = set([(6, 2), (6, 6), (6, 10)])
+
+### Stoliki - II rzad
+desksII = set([(10, 2), (10, 6), (10, 10)])
+
+### Okna
+windows = set([(13, 1), (13, 2), (13, 3), (13, 5), (13, 6),
+               (13, 7), (13, 9), (13, 10), (13, 11)])
+
+### Klienci
+customers = set([(6.5, 1.5), (6.5, 3.5), (10.5, 1.5), (10.5, 3.5),
+                 (6.5, 5.5), (6.5, 7.5), (10.5, 5.5), (10.5, 7.5),
+                 (6.5, 9.5), (6.5, 11.5), (10.5, 9.5), (10.5, 11.5)])
+customersObstacles = set([])
+for customer in customers:
+    customersObstacles.add((int(customer[0]), int(customer[1])))
+
+obstacles = set([(7, 1), (8, 1), (12, 1), (13, 1), (7, 2), (8, 2),
+                (12, 2), (13, 2), (7, 3), (8, 3), (12, 3), (13,3),
+                (7, 7), (8, 7), (12, 7), (13, 7), (7, 8), (8, 8),
+                (12, 8), (13, 8), (7, 9), (8, 9), (12, 9), (13, 9),
+                (7, 13), (8, 13), (12, 13), (13, 13), (7, 14), (8, 14),
+                (12, 14), (13, 14), (7, 15), (8, 15), (12, 15),(13, 15)
+            ])
+
+solution = None
+sol_len = 0
+
 pygame.init()
-screen = pygame.display.set_mode((850, 850))
+screen = pygame.display.set_mode((sizeWindow, sizeWindow))
 done = False
 is_blue = True
 kelnerX = 25
@@ -16,28 +64,6 @@ clock = pygame.time.Clock()
 ### indeksowanie kratek: lewo/góra: (0, 0); prawo/dół: (rozmiar - 1, rozmiar - 1)
 ### krata: 17x17
 
-j = -1
-size = 17
-wspKelnerX = 0
-wspKelnerY = 0
-wspX = 0
-wspY = 0
-obstacles = set([(7, 1), (8, 1), (12, 1), (13, 1), (7, 2), (8, 2),
-                (12, 2), (13, 2), (7, 3), (8, 3), (12, 3), (13,3),
-                (7, 7), (8, 7), (12, 7), (13, 7), (7, 8), (8, 8),
-                (12, 8), (13, 8), (7, 9), (8, 9), (12, 9), (13, 9),
-                (7, 13), (8, 13), (12, 13), (13, 13), (7, 14), (8, 14),
-                (12, 14), (13, 14), (7, 15), (8, 15), (12, 15),(13, 15)
-            ])
-
-solution = None
-sol_len = 0
-## r = PlanRoute((wspKelnerX, wspKelnerY), (wspX, wspY), obstacles, size)
-"""if (astar_search(r) != None):
-    solution = astar_search(r).solution()
-    sol_len = solution.__len__()
-    print(solution)"""
-
 while not done:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
@@ -46,78 +72,64 @@ while not done:
             is_blue = not is_blue
         if event.type == pygame.MOUSEBUTTONUP:
             pos = pygame.mouse.get_pos()
-            wspX = pos[0] // 50
-            wspY = pos[1] // 50
-            wspKelnerX = kelnerX // 50
-            wspKelnerY = kelnerY // 50
-            if (wspX, wspY) not in obstacles:
+            coordsX = pos[0] // m
+            coordsY = pos[1] // m
+            waiterCoordsX = kelnerX // m
+            waiterCoordsY = kelnerY // m
+            if (coordsX, coordsY) not in obstacles:
                 j = 0
-                rClick = PlanRoute((wspKelnerX, wspKelnerY), (wspX, wspY), obstacles, size)
+                rClick = PlanRoute((waiterCoordsX, waiterCoordsY), (coordsX, coordsY), obstacles, size)
                 if (astar_search(rClick) != None):
                     solution = astar_search(rClick).solution()
                     sol_len = solution.__len__()
                     print(solution)
 
-
     if j>=0 and j < sol_len and (solution != None):
         x = solution[j]
         if x == "UP":
-            kelnerY -= 50
+            kelnerY -= m
         if x == "DOWN":
-            kelnerY += 50
+            kelnerY += m
         if x == "LEFT":
-            kelnerX -= 50
+            kelnerX -= m
         if x == "RIGHT":
-            kelnerX += 50
+            kelnerX += m
     j = j + 1
 
     pressed = pygame.key.get_pressed()
-    if pressed[pygame.K_UP]: kelnerY -= 50
-    if pressed[pygame.K_DOWN]: kelnerY += 50
-    if pressed[pygame.K_LEFT]: kelnerX -= 50
-    if pressed[pygame.K_RIGHT]: kelnerX += 50
+    if pressed[pygame.K_UP]: kelnerY -= m
+    if pressed[pygame.K_DOWN]: kelnerY += m
+    if pressed[pygame.K_LEFT]: kelnerX -= m
+    if pressed[pygame.K_RIGHT]: kelnerX += m
 
-    screen.fill((255, 255, 255))
+    screen.fill((243, 138, 55))
 
-    for i in range(0,85):
-        pygame.draw.line(screen,(0,0,0),(krataX+i*50,0),(krataX+i*50,850),1)
-        pygame.draw.line(screen,(0,0,0), (0,krataY+i*50),(850, krataY+i*50), 1)
+    for i in range(0, 85):
+        pygame.draw.line(screen,(0, 0, 0),(krataX+i*m, 0),(krataX+i*m, sizeWindow), 1)
+        pygame.draw.line(screen,(0, 0, 0), (0, krataY+i*m),(sizeWindow, krataY+i*m), 1)
 
-    pygame.draw.rect(screen, (255, 0, 0) , pygame.Rect(0, 50, 100, 200))
-    pygame.draw.rect(screen, (200, 200, 0), pygame.Rect(0, 600, 100, 200))
+    pygame.draw.rect(screen, (255, 0, 0) , pygame.Rect(weWyX*m, weWyY*m, m, m)) ### wejscie/wyjscie
+    pygame.draw.rect(screen, (0, 255, 0), pygame.Rect(wcX*m, wcY*m, m, m)) ### WC
+    pygame.draw.rect(screen, (0, 0, 255), pygame.Rect(kuchniaX*m, kuchniaY*m, m, m)) ### kuchnia/zaplecze
 
-    pygame.draw.rect(screen, (139, 69, 19), pygame.Rect(350, 75, 100, 100))
-    pygame.draw.rect(screen, (139, 69, 19), pygame.Rect(350, 370, 100, 100))
-    pygame.draw.rect(screen, (139, 69, 19), pygame.Rect(350, 675, 100, 100))
+    for desk in desksI: ## I rzad stolikow
+        pygame.draw.rect(screen, (139, 69, 19), pygame.Rect(desk[0] * m, desk[1] * m, m, m))
 
-    pygame.draw.rect(screen, (139,69,19), pygame.Rect(600, 75, 100, 100))
-    pygame.draw.rect(screen, (139,69,19), pygame.Rect(600, 370, 100, 100))
-    pygame.draw.rect(screen, (139,69,19), pygame.Rect(600, 675, 100, 100))
+    for desk in desksII: ## II rzad stolikow
+        pygame.draw.rect(screen, (139, 69, 19), pygame.Rect(desk[0] * m, desk[1] * m, m, m))
+
+    for window in windows: ## okna
+        pygame.draw.rect(screen, (255, 255, 255), pygame.Rect(window[0] * m, window[1] * m, m, m))
 
     if is_blue:
         color = (0, 128, 255)
     else:
         color = (255, 100, 0)
 
-    pygame.draw.circle(screen, color, (kelnerX, kelnerY),25)
+    pygame.draw.circle(screen, color, (kelnerX, kelnerY), int(m / 2))
 
-    pygame.draw.circle(screen, (0,102,0), (400, 50), 25)
-    pygame.draw.circle(screen, (0, 102, 0), (400, 200), 25)
-
-    pygame.draw.circle(screen, (0, 102, 0), (650, 50), 25)
-    pygame.draw.circle(screen, (0, 102, 0), (650, 200), 25)
-
-    pygame.draw.circle(screen, (0, 102, 0), (400, 345), 25)
-    pygame.draw.circle(screen, (0, 102, 0), (400, 495), 25)
-
-    pygame.draw.circle(screen, (0, 102, 0), (650, 345), 25)
-    pygame.draw.circle(screen, (0, 102, 0), (650, 495), 25)
-
-    pygame.draw.circle(screen, (0, 102, 0), (400, 650), 25)
-    pygame.draw.circle(screen, (0, 102, 0), (400, 800), 25)
-
-    pygame.draw.circle(screen, (0, 102, 0), (650, 650), 25)
-    pygame.draw.circle(screen, (0, 102, 0), (650, 800), 25)
+    for customer in customers: ## klienci
+        pygame.draw.circle(screen, (0, 102, 0), (int(customer[0] * m), int(customer[1] * m)), int(m / 2))
 
     pygame.display.flip()
     clock.tick(15)
