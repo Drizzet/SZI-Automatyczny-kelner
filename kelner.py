@@ -15,16 +15,18 @@ coordsY = 0 ## cel Y w jednostkach kratek
 ### Pomieszczenia
 weWyX = 0
 weWyY = 2
+wyjscie = set([(weWyX, weWyY)])
 wcX = 0
 wcY = 6
+wc = set([(wcX, wcY)])
 kuchniaX = 0
 kuchniaY = 10
 rooms = set([(weWyX, weWyY), (wcX, wcY), (kuchniaX, kuchniaY)])
 
-### Stoliki - I rzad
+### Stoliki - I kolumna
 desksI = set([(6, 2), (6, 6), (6, 10)])
 
-### Stoliki - II rzad
+### Stoliki - II kolumna
 desksII = set([(10, 2), (10, 6), (10, 10)])
 
 ### Okna
@@ -39,13 +41,19 @@ customersObstacles = set([])
 for customer in customers:
     customersObstacles.add((int(customer[0]), int(customer[1])))
 
-obstacles = set([(7, 1), (8, 1), (12, 1), (13, 1), (7, 2), (8, 2),
-                (12, 2), (13, 2), (7, 3), (8, 3), (12, 3), (13,3),
-                (7, 7), (8, 7), (12, 7), (13, 7), (7, 8), (8, 8),
-                (12, 8), (13, 8), (7, 9), (8, 9), (12, 9), (13, 9),
-                (7, 13), (8, 13), (12, 13), (13, 13), (7, 14), (8, 14),
-                (12, 14), (13, 14), (7, 15), (8, 15), (12, 15),(13, 15)
-            ])
+obstaclesSet = desksI | desksII | windows | customersObstacles | wc | wyjscie
+
+class Obstacles:
+    def __init__(self, desksI, desksII, windows, wc, wyjscie, customersObstacles):
+        self.desksI = desksI
+        self.desksII = desksII
+        self.windows = windows
+        self.customers = customersObstacles
+        self.wc = wc
+        self.wyjscie = wyjscie
+        self.obstaclesAll = desksI | desksII | windows | wc | customersObstacles
+
+obstacles = Obstacles(desksI, desksII, windows, wc, wyjscie, customersObstacles)
 
 solution = None
 sol_len = 0
@@ -54,8 +62,8 @@ pygame.init()
 screen = pygame.display.set_mode((sizeWindow, sizeWindow))
 done = False
 is_blue = True
-kelnerX = 25
-kelnerY = 25
+kelnerX = int(m * 0.5)
+kelnerY = int(m * 13.5)
 krataX = 0
 krataY = 0
 clock = pygame.time.Clock()
@@ -76,7 +84,7 @@ while not done:
             coordsY = pos[1] // m
             waiterCoordsX = kelnerX // m
             waiterCoordsY = kelnerY // m
-            if (coordsX, coordsY) not in obstacles:
+            if (coordsX, coordsY) not in obstaclesSet:
                 j = 0
                 rClick = PlanRoute((waiterCoordsX, waiterCoordsY), (coordsX, coordsY), obstacles, size)
                 if (astar_search(rClick) != None):
@@ -112,10 +120,10 @@ while not done:
     pygame.draw.rect(screen, (0, 255, 0), pygame.Rect(wcX*m, wcY*m, m, m)) ### WC
     pygame.draw.rect(screen, (0, 0, 255), pygame.Rect(kuchniaX*m, kuchniaY*m, m, m)) ### kuchnia/zaplecze
 
-    for desk in desksI: ## I rzad stolikow
+    for desk in desksI: ## I kolumna stolikow
         pygame.draw.rect(screen, (139, 69, 19), pygame.Rect(desk[0] * m, desk[1] * m, m, m))
 
-    for desk in desksII: ## II rzad stolikow
+    for desk in desksII: ## II kolumna stolikow
         pygame.draw.rect(screen, (139, 69, 19), pygame.Rect(desk[0] * m, desk[1] * m, m, m))
 
     for window in windows: ## okna

@@ -81,7 +81,7 @@ def best_first_graph_search(problem, f):
     node = Node(problem.initial)
     if problem.goal_test(node.state):
         return node
-    if problem.goal in problem.obstacles:
+    if problem.goal in problem.obstacles.obstaclesAll:
         return None
     frontier = PriorityQueue(f)
     frontier.append(node)
@@ -156,7 +156,7 @@ class PlanRoute():
         else:
             raise Exception('InvalidAction')
 
-        if proposed_loc not in self.obstacles:
+        if proposed_loc not in self.obstacles.obstaclesAll:
             state = proposed_loc
 
         return state
@@ -166,10 +166,118 @@ class PlanRoute():
             w przeciwnym wypadku zwraca wartość False. """
         return state == self.goal
 
-    def path_cost(self, c, state1, action, state2):
+    def path_cost(self, c, state1, action, state2): ## przyklad - do zmiany sa warunki!
         """ Zwraca koszt przejścia ścieżki ze stanu state1 przez jakąś akcję do stanu state2,
             zakładając koszt c do osiągnięcia stanu state1. """
-        return c + 1
+
+
+        ### Analizowanie state1
+        ## stoliki w I kolumnie:
+        if (state1[0] - 1, state1[1] - 1) in self.obstacles.desksI:
+            c = c - 1
+        if (state1[0] - 1, state1[1]) in self.obstacles.desksI:
+            c = c - 1
+        if (state1[0] - 1, state1[1] + 1) in self.obstacles.desksI:
+            c = c - 1
+        if (state1[0] + 1, state1[1] - 1) in self.obstacles.desksI:
+            c = c - 1
+        if (state1[0] + 1, state1[1]) in self.obstacles.desksI:
+            c = c - 1
+        if (state1[0] + 1, state1[1] + 1) in self.obstacles.desksI:
+            c = c - 1
+
+        ## stoliki w II kolumnie:
+        if (state1[0] - 1, state1[1] - 1) in self.obstacles.desksII:
+            c = c - 1
+        if (state1[0] - 1, state1[1]) in self.obstacles.desksII:
+            c = c - 1
+        if (state1[0] - 1, state1[1] + 1) in self.obstacles.desksII:
+            c = c - 1
+        if (state1[0] + 1, state1[1] - 1) in self.obstacles.desksII:
+            c = c - 1
+        if (state1[0] + 1, state1[1]) in self.obstacles.desksII:
+            c = c - 1
+        if (state1[0] + 1, state1[1] + 1) in self.obstacles.desksII:
+            c = c - 1
+
+        ## klienci
+        if (state1[0], state1[1] - 1) in self.obstacles.customers:
+            c = c - 2
+        if (state1[0], state1[1] + 1) in self.obstacles.customers:
+            c = c - 2
+
+        ## okna
+        if (state1[0] - 1, state1[1]) in self.obstacles.windows:
+            c = c - 3
+
+        ## wc
+        if (state1[0] + 1, state1[1]) in self.obstacles.wc:
+            c = c - 3
+
+        ## wyjscie
+        if (state1[0] + 1, state1[1]) in self.obstacles.wyjscie:
+            c = c - 3
+        if (state1[0] - 1, state1[1]) in self.obstacles.wyjscie:
+            c = c - 3
+        if (state1[0], state1[1] + 1) in self.obstacles.wyjscie:
+            c = c - 3
+        if (state1[0], state1[1] - 1) in self.obstacles.wyjscie:
+            c = c - 3
+
+        ### Analizowanie state2
+        ## stoliki w I kolumnie:
+        if (state2[0] - 1, state2[1] - 1) in self.obstacles.desksI:
+            c = c + 1
+        if (state2[0] - 1, state2[1]) in self.obstacles.desksI:
+            c = c + 1
+        if (state2[0] - 1, state2[1] + 1) in self.obstacles.desksI:
+            c = c + 1
+        if (state2[0] + 1, state2[1] - 1) in self.obstacles.desksI:
+            c = c + 1
+        if (state2[0] + 1, state2[1]) in self.obstacles.desksI:
+            c = c + 1
+        if (state2[0] + 1, state2[1] + 1) in self.obstacles.desksI:
+            c = c + 1
+
+        ## stoliki w II kolumnie:
+        if (state2[0] - 1, state2[1] - 1) in self.obstacles.desksII:
+            c = c + 2
+        if (state2[0] - 1, state2[1]) in self.obstacles.desksII:
+            c = c + 2
+        if (state2[0] - 1, state2[1] + 1) in self.obstacles.desksII:
+            c = c + 2
+        if (state2[0] + 1, state2[1] - 1) in self.obstacles.desksII:
+            c = c + 2
+        if (state2[0] + 1, state2[1]) in self.obstacles.desksII:
+            c = c + 2
+        if (state2[0] + 1, state2[1] + 1) in self.obstacles.desksII:
+            c = c + 2
+
+        ## klienci
+        if (state2[0], state2[1] - 1) in self.obstacles.customers:
+            c = c + 5
+        if (state2[0], state2[1] + 1) in self.obstacles.customers:
+            c = c + 5
+
+        ## okna
+        if (state2[0] - 1, state2[1]) in self.obstacles.windows:
+            c = c + 15
+
+        ## wc
+        if (state2[0] + 1, state2[1]) in self.obstacles.wc:
+            c = c + 5
+
+        ## wyjscie
+        if (state2[0] + 1, state2[1]) in self.obstacles.wyjscie:
+            c = c + 7
+        if (state2[0] - 1, state2[1]) in self.obstacles.wyjscie:
+            c = c + 7
+        if (state2[0], state2[1] + 1) in self.obstacles.wyjscie:
+            c = c + 7
+        if (state2[0], state2[1] - 1) in self.obstacles.wyjscie:
+            c = c + 7
+
+        return c
 
     def h(self, node):
         """ Zwraca wartość heurystyki Manhattan dla danego stanu. """
