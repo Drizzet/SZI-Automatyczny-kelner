@@ -118,23 +118,24 @@ class PlanRoute():
 
     def actions(self, state):
         """ Zwraca wszystkie akcje, które mogą być wykonane w danym stanie. """
-        possible_actions = ['UP', 'LEFT', 'DOWN', 'RIGHT']
+        possible_actions = ['Forward', 'TurnLeft', 'TurnRight']
         x = state[0]
         y = state[1]
+        dir = state[2]
 
         # Zapobieganie niedozwolonym akcjom
-        if x == 0:
-            if 'LEFT' in possible_actions:
-                possible_actions.remove('LEFT')
-        if y == 0:
-            if 'UP' in possible_actions:
-                possible_actions.remove('UP')
-        if x == (self.dimrow - 1):
-            if 'RIGHT' in possible_actions:
-                possible_actions.remove('RIGHT')
-        if y == (self.dimrow - 1):
-            if 'DOWN' in possible_actions:
-                possible_actions.remove('DOWN')
+        if x == 0 and dir == 'W':
+            if 'Forward' in possible_actions:
+                possible_actions.remove('Forward')
+        if y == 0 and dir == 'N':
+            if 'Forward' in possible_actions:
+                possible_actions.remove('Forward')
+        if x == (self.dimrow - 1) and dir == 'E':
+            if 'Forward' in possible_actions:
+                possible_actions.remove('Forward')
+        if y == (self.dimrow - 1) and dir == 'S':
+            if 'Forward' in possible_actions:
+                possible_actions.remove('Forward')
 
         return possible_actions
 
@@ -142,29 +143,55 @@ class PlanRoute():
         """ Dla danego stanu i akcji zwracany jest nowy stan, który jest wynikiem danej akcji. """
         x = state[0]
         y = state[1]
-        proposed_loc = tuple()
+        dir = state[2]
+        proposed_loc = [x, y]
 
-        # Ruch agenta
-        if action == 'UP':
-            proposed_loc = (x, y - 1)
-        elif action == 'DOWN':
-            proposed_loc = (x, y + 1)
-        elif action == 'LEFT':
-            proposed_loc = (x - 1, y)
-        elif action == 'RIGHT':
-            proposed_loc = (x + 1, y)
-        else:
-            raise Exception('InvalidAction')
+        # Ruchy agenta
+        if action == 'Forward':
+            if dir == 'N':
+                proposed_loc = [x, y - 1]
+            elif dir == 'S':
+                proposed_loc = [x, y + 1]
+            elif dir == 'W':
+                proposed_loc = [x - 1, y]
+            elif dir == 'E':
+                proposed_loc = [x + 1, y]
+            else:
+                raise Exception('InvalidOrientation')
 
-        if proposed_loc not in self.obstacles.obstaclesAll:
-            state = proposed_loc
+        elif action == 'TurnLeft':
+            if dir == 'N':
+                dir = 'W'
+            elif dir == 'S':
+                dir = 'E'
+            elif dir == 'E':
+                dir = 'N'
+            elif dir == 'W':
+                dir = 'S'
+            else:
+                raise Exception('InvalidOrientation')
+
+        elif action == 'TurnRight':
+            if dir == 'N':
+                dir = 'E'
+            elif dir == 'S':
+                dir = 'W'
+            elif dir == 'E':
+                dir = 'S'
+            elif dir == 'W':
+                dir = 'N'
+            else:
+                raise Exception('InvalidOrientation')
+
+        if (proposed_loc[0], proposed_loc[1]) not in self.obstacles.obstaclesAll:
+            state = (proposed_loc[0], proposed_loc[1], dir)
 
         return state
 
     def goal_test(self, state):
         """ Dla danego stanu zwraca wartość True jeśli stan jest stanem docelowym, 
             w przeciwnym wypadku zwraca wartość False. """
-        return state == self.goal
+        return (state[0] == self.goal[0]) and (state[1] == self.goal[1])
 
     def path_cost(self, c, state1, action, state2): ## przyklad - do zmiany sa warunki!
         """ Zwraca koszt przejścia ścieżki ze stanu state1 przez jakąś akcję do stanu state2,
@@ -200,44 +227,38 @@ class PlanRoute():
         if (state1[0] + 1, state1[1] + 1) in self.obstacles.desksII:
             c = c - 1
 
-        ## klienci
-        if (state1[0], state1[1] - 1) in self.obstacles.customers:
-            c = c - 2
-        if (state1[0], state1[1] + 1) in self.obstacles.customers:
-            c = c - 2
-
         ## okna
         if (state1[0] - 1, state1[1]) in self.obstacles.windows:
-            c = c - 3
+            c = c - 1
 
         ## wc
         if (state1[0] + 1, state1[1]) in self.obstacles.wc:
-            c = c - 3
+            c = c - 1
 
         ## wyjscie
         if (state1[0] + 1, state1[1]) in self.obstacles.wyjscie:
-            c = c - 3
+            c = c - 1
         if (state1[0] - 1, state1[1]) in self.obstacles.wyjscie:
-            c = c - 3
+            c = c - 1
         if (state1[0], state1[1] + 1) in self.obstacles.wyjscie:
-            c = c - 3
+            c = c - 1
         if (state1[0], state1[1] - 1) in self.obstacles.wyjscie:
-            c = c - 3
+            c = c - 1
 
         ### Analizowanie state2
         ## stoliki w I kolumnie:
         if (state2[0] - 1, state2[1] - 1) in self.obstacles.desksI:
-            c = c + 1
+            c = c + 2
         if (state2[0] - 1, state2[1]) in self.obstacles.desksI:
-            c = c + 1
+            c = c + 2
         if (state2[0] - 1, state2[1] + 1) in self.obstacles.desksI:
-            c = c + 1
+            c = c + 2
         if (state2[0] + 1, state2[1] - 1) in self.obstacles.desksI:
-            c = c + 1
+            c = c + 2
         if (state2[0] + 1, state2[1]) in self.obstacles.desksI:
-            c = c + 1
+            c = c + 2
         if (state2[0] + 1, state2[1] + 1) in self.obstacles.desksI:
-            c = c + 1
+            c = c + 2
 
         ## stoliki w II kolumnie:
         if (state2[0] - 1, state2[1] - 1) in self.obstacles.desksII:
@@ -253,15 +274,11 @@ class PlanRoute():
         if (state2[0] + 1, state2[1] + 1) in self.obstacles.desksII:
             c = c + 2
 
-        ## klienci
-        if (state2[0], state2[1] - 1) in self.obstacles.customers:
-            c = c + 5
-        if (state2[0], state2[1] + 1) in self.obstacles.customers:
-            c = c + 5
-
         ## okna
         if (state2[0] - 1, state2[1]) in self.obstacles.windows:
             c = c + 15
+        if (state2[0]) == (self.dimrow - 1):
+            c = c + 30
 
         ## wc
         if (state2[0] + 1, state2[1]) in self.obstacles.wc:
