@@ -2,7 +2,7 @@ import pygame
 
 j = -1
 
-size = 14 ### ile kratek w rzedzie/kolumnie
+size = 15 ### ile kratek w rzedzie/kolumnie
 m = 50 ## mnoznik 1 kratki na ekranie w px
 sizeWindow = size*m ### rozmiar okna w px
 
@@ -13,29 +13,29 @@ coordsY = 0 ## cel Y w jednostkach kratek
 
 ### Pomieszczenia
 weWyX = 0
-weWyY = 2
+weWyY = 3
 wyjscie = set([(weWyX, weWyY)])
 wcX = 0
-wcY = 6
+wcY = 7
 wc = set([(wcX, wcY)])
 kuchniaX = 0
-kuchniaY = 10
+kuchniaY = 11
 rooms = set([(weWyX, weWyY), (wcX, wcY), (kuchniaX, kuchniaY)])
 
 ### Stoliki - I kolumna
-desksI = set([(6, 2), (6, 6), (6, 10)])
+desksI = set([(6, 3), (6, 7), (6, 11)])
 
 ### Stoliki - II kolumna
-desksII = set([(10, 2), (10, 6), (10, 10)])
+desksII = set([(10, 3), (10, 7), (10, 11)])
 
 ### Okna
-windows = set([(13, 1), (13, 2), (13, 3), (13, 5), (13, 6),
-               (13, 7), (13, 9), (13, 10), (13, 11)])
+windows = set([(14, 2), (14, 3), (14, 4), (14, 6), (14, 7),
+               (14, 8), (14, 10), (14, 11), (14, 12)])
 
 ### Klienci
-customers = set([(6.5, 1.5), (6.5, 3.5), (10.5, 1.5), (10.5, 3.5),
-                 (6.5, 5.5), (6.5, 7.5), (10.5, 5.5), (10.5, 7.5),
-                 (6.5, 9.5), (6.5, 11.5), (10.5, 9.5), (10.5, 11.5)])
+customers = set([(6.5, 2.5), (6.5, 4.5), (10.5, 2.5), (10.5, 4.5),
+                 (6.5, 6.5), (6.5, 8.5), (10.5, 6.5), (10.5, 8.5),
+                 (6.5, 10.5), (6.5, 12.5), (10.5, 10.5), (10.5, 12.5)])
 customersObstacles = set([])
 for customer in customers:
     customersObstacles.add((int(customer[0]), int(customer[1])))

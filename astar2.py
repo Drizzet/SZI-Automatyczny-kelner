@@ -198,6 +198,12 @@ class PlanRoute():
             zakładając koszt c do osiągnięcia stanu state1. """
 
 
+        ## Analizowanie ruchu
+        if(action == 'TurnLeft' or action == 'TurnRight'):
+            c = c + 4;
+       ## if (action == 'Forward'):
+        ##    c = c + 1;
+
         ### Analizowanie state1
         ## stoliki w I kolumnie:
         if (state1[0] - 1, state1[1] - 1) in self.obstacles.desksI:
@@ -248,51 +254,51 @@ class PlanRoute():
         ### Analizowanie state2
         ## stoliki w I kolumnie:
         if (state2[0] - 1, state2[1] - 1) in self.obstacles.desksI:
-            c = c + 2
+            c = c + 20
         if (state2[0] - 1, state2[1]) in self.obstacles.desksI:
-            c = c + 2
+            c = c + 20
         if (state2[0] - 1, state2[1] + 1) in self.obstacles.desksI:
-            c = c + 2
+            c = c + 20
         if (state2[0] + 1, state2[1] - 1) in self.obstacles.desksI:
-            c = c + 2
+            c = c + 20
         if (state2[0] + 1, state2[1]) in self.obstacles.desksI:
-            c = c + 2
+            c = c + 20
         if (state2[0] + 1, state2[1] + 1) in self.obstacles.desksI:
-            c = c + 2
+            c = c + 20
 
         ## stoliki w II kolumnie:
         if (state2[0] - 1, state2[1] - 1) in self.obstacles.desksII:
-            c = c + 2
+            c = c + 20
         if (state2[0] - 1, state2[1]) in self.obstacles.desksII:
-            c = c + 2
+            c = c + 20
         if (state2[0] - 1, state2[1] + 1) in self.obstacles.desksII:
-            c = c + 2
+            c = c + 20
         if (state2[0] + 1, state2[1] - 1) in self.obstacles.desksII:
-            c = c + 2
+            c = c + 20
         if (state2[0] + 1, state2[1]) in self.obstacles.desksII:
-            c = c + 2
+            c = c + 20
         if (state2[0] + 1, state2[1] + 1) in self.obstacles.desksII:
-            c = c + 2
+            c = c + 20
 
         ## okna
         if (state2[0] - 1, state2[1]) in self.obstacles.windows:
-            c = c + 15
+            c = c + 8
         if (state2[0]) == (self.dimrow - 1):
-            c = c + 30
+            c = c + 8
 
         ## wc
         if (state2[0] + 1, state2[1]) in self.obstacles.wc:
-            c = c + 5
+            c = c + 150
 
         ## wyjscie
         if (state2[0] + 1, state2[1]) in self.obstacles.wyjscie:
-            c = c + 7
+            c = c + 2
         if (state2[0] - 1, state2[1]) in self.obstacles.wyjscie:
-            c = c + 7
+            c = c + 2
         if (state2[0], state2[1] + 1) in self.obstacles.wyjscie:
-            c = c + 7
+            c = c + 2
         if (state2[0], state2[1] - 1) in self.obstacles.wyjscie:
-            c = c + 7
+            c = c + 2
 
         return c
 
