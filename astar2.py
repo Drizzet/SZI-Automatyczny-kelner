@@ -206,31 +206,17 @@ class PlanRoute():
 
         ### Analizowanie state1
         ## stoliki w I kolumnie:
-        if (state1[0] - 1, state1[1] - 1) in self.obstacles.desksI:
+        if (state1[0] - 1, state1[1] - 1) in self.obstacles.desks:
             c = c - 1
-        if (state1[0] - 1, state1[1]) in self.obstacles.desksI:
+        if (state1[0] - 1, state1[1]) in self.obstacles.desks:
             c = c - 1
-        if (state1[0] - 1, state1[1] + 1) in self.obstacles.desksI:
+        if (state1[0] - 1, state1[1] + 1) in self.obstacles.desks:
             c = c - 1
-        if (state1[0] + 1, state1[1] - 1) in self.obstacles.desksI:
+        if (state1[0] + 1, state1[1] - 1) in self.obstacles.desks:
             c = c - 1
-        if (state1[0] + 1, state1[1]) in self.obstacles.desksI:
+        if (state1[0] + 1, state1[1]) in self.obstacles.desks:
             c = c - 1
-        if (state1[0] + 1, state1[1] + 1) in self.obstacles.desksI:
-            c = c - 1
-
-        ## stoliki w II kolumnie:
-        if (state1[0] - 1, state1[1] - 1) in self.obstacles.desksII:
-            c = c - 1
-        if (state1[0] - 1, state1[1]) in self.obstacles.desksII:
-            c = c - 1
-        if (state1[0] - 1, state1[1] + 1) in self.obstacles.desksII:
-            c = c - 1
-        if (state1[0] + 1, state1[1] - 1) in self.obstacles.desksII:
-            c = c - 1
-        if (state1[0] + 1, state1[1]) in self.obstacles.desksII:
-            c = c - 1
-        if (state1[0] + 1, state1[1] + 1) in self.obstacles.desksII:
+        if (state1[0] + 1, state1[1] + 1) in self.obstacles.desks:
             c = c - 1
 
         ## okna
@@ -253,31 +239,17 @@ class PlanRoute():
 
         ### Analizowanie state2
         ## stoliki w I kolumnie:
-        if (state2[0] - 1, state2[1] - 1) in self.obstacles.desksI:
+        if (state2[0] - 1, state2[1] - 1) in self.obstacles.desks:
             c = c + 20
-        if (state2[0] - 1, state2[1]) in self.obstacles.desksI:
+        if (state2[0] - 1, state2[1]) in self.obstacles.desks:
             c = c + 20
-        if (state2[0] - 1, state2[1] + 1) in self.obstacles.desksI:
+        if (state2[0] - 1, state2[1] + 1) in self.obstacles.desks:
             c = c + 20
-        if (state2[0] + 1, state2[1] - 1) in self.obstacles.desksI:
+        if (state2[0] + 1, state2[1] - 1) in self.obstacles.desks:
             c = c + 20
-        if (state2[0] + 1, state2[1]) in self.obstacles.desksI:
+        if (state2[0] + 1, state2[1]) in self.obstacles.desks:
             c = c + 20
-        if (state2[0] + 1, state2[1] + 1) in self.obstacles.desksI:
-            c = c + 20
-
-        ## stoliki w II kolumnie:
-        if (state2[0] - 1, state2[1] - 1) in self.obstacles.desksII:
-            c = c + 20
-        if (state2[0] - 1, state2[1]) in self.obstacles.desksII:
-            c = c + 20
-        if (state2[0] - 1, state2[1] + 1) in self.obstacles.desksII:
-            c = c + 20
-        if (state2[0] + 1, state2[1] - 1) in self.obstacles.desksII:
-            c = c + 20
-        if (state2[0] + 1, state2[1]) in self.obstacles.desksII:
-            c = c + 20
-        if (state2[0] + 1, state2[1] + 1) in self.obstacles.desksII:
+        if (state2[0] + 1, state2[1] + 1) in self.obstacles.desks:
             c = c + 20
 
         ## okna

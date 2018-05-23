@@ -1,15 +1,15 @@
 import pygame
-
+from genetic import *
 j = -1
 
-size = 15 ### ile kratek w rzedzie/kolumnie
-m = 50 ## mnoznik 1 kratki na ekranie w px
-sizeWindow = size*m ### rozmiar okna w px
+size = 15  ### ile kratek w rzedzie/kolumnie
+m = 50  ## mnoznik 1 kratki na ekranie w px
+sizeWindow = size * m  ### rozmiar okna w px
 
-waiterCoordsX = 0 ## polozenie X kelnera w jednostkach kratek
-waiterCoordsY = 0 ## polozenie Y kelnera w jednostkach kratek
-coordsX = 0 ## cel X w jednostkach kratek
-coordsY = 0 ## cel Y w jednostkach kratek
+waiterCoordsX = 0  ## polozenie X kelnera w jednostkach kratek
+waiterCoordsY = 0  ## polozenie Y kelnera w jednostkach kratek
+coordsX = 0  ## cel X w jednostkach kratek
+coordsY = 0  ## cel Y w jednostkach kratek
 
 ### Pomieszczenia
 weWyX = 0
@@ -22,37 +22,41 @@ kuchniaX = 0
 kuchniaY = 11
 rooms = set([(weWyX, weWyY), (wcX, wcY), (kuchniaX, kuchniaY)])
 
-### Stoliki - I kolumna
-desksI = set([(6, 3), (6, 7), (6, 11)])
-
-### Stoliki - II kolumna
-desksII = set([(10, 3), (10, 7), (10, 11)])
+### Stoliki
+desks = set([(0, 1), (0, 2), (0, 3),(0, 4), (0, 5), (0, 6)])
 
 ### Okna
 windows = set([(14, 2), (14, 3), (14, 4), (14, 6), (14, 7),
                (14, 8), (14, 10), (14, 11), (14, 12)])
 
 ### Klienci
-customers = set([(6.5, 2.5), (6.5, 4.5), (10.5, 2.5), (10.5, 4.5),
-                 (6.5, 6.5), (6.5, 8.5), (10.5, 6.5), (10.5, 8.5),
-                 (6.5, 10.5), (6.5, 12.5), (10.5, 10.5), (10.5, 12.5)])
+desks = Genetic(desks, windows, rooms, size)
+customers = set([])
+for desk in desks:
+    for desk2 in desks:
+        if(desk2 != desk[0] and desk2 != desk[1] + 1 ):
+            customers.add((desk[0] + 0.5, desk[1] + 1.5))
+        if (desk2 != desk[0] and desk2 != desk[1] - 1):
+            customers.add((desk[0] + 0.5, desk[1] - 0.5))
+
 customersObstacles = set([])
 for customer in customers:
     customersObstacles.add((int(customer[0]), int(customer[1])))
 
-obstaclesSet = desksI | desksII | windows | customersObstacles | wc | wyjscie
+obstaclesSet = desks | windows | customersObstacles | wc | wyjscie
+
 
 class Obstacles:
-    def __init__(self, desksI, desksII, windows, wc, wyjscie, customersObstacles):
-        self.desksI = desksI
-        self.desksII = desksII
+    def __init__(self, desks, windows, wc, wyjscie, customersObstacles):
+        self.desks = desks
         self.windows = windows
         self.customers = customersObstacles
         self.wc = wc
         self.wyjscie = wyjscie
-        self.obstaclesAll = desksI | desksII | windows | wc | wyjscie | customersObstacles
+        self.obstaclesAll = desks | windows | wc | wyjscie | customersObstacles
 
-obstacles = Obstacles(desksI, desksII, windows, wc, wyjscie, customersObstacles)
+
+obstacles = Obstacles(desks, windows, wc, wyjscie, customersObstacles)
 
 solution = None
 sol_len = 0

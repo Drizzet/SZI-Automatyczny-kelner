@@ -1,8 +1,11 @@
 from config import *
 from astar2 import *
+from genetic import *
 
 pygame.init()
 
+#desks = Genetic(desks, windows, rooms, size)
+#print(desks)
 while not done:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
@@ -62,10 +65,7 @@ while not done:
         horizontal_line.fill((0, 0, 0, 30))
         screen.blit(horizontal_line, (0, i - 1))
 
-    for desk in desksI: ## I kolumna stolikow
-        pygame.draw.rect(screen, (139, 69, 19), pygame.Rect(desk[0] * m, desk[1] * m, m, m))
-
-    for desk in desksII: ## II kolumna stolikow
+    for desk in desks: ## stoliki
         pygame.draw.rect(screen, (139, 69, 19), pygame.Rect(desk[0] * m, desk[1] * m, m, m))
 
     for window in windows: ## okna
