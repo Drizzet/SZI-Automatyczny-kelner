@@ -1,5 +1,34 @@
-import pygame
+from text import *
+from order import *
 from genetic import *
+
+pygame.init()
+
+def startCustomer():
+    text = []
+    talks = startConversation()
+    test_data = prepareTestData(talks)
+    talkCustomer = talk(talks, test_data)
+    talkText = talkCustomer[0]
+    order = talkCustomer[1]
+    for x in talkText:
+        text.append(create_text(x, font_preferences, 16, (0, 0, 0)))
+    return [text, order]
+
+class Obstacles:
+    def __init__(self, desksI, desksII, windows, wc, wyjscie, customersObstacles):
+        self.desksI = desksI
+        self.desksII = desksII
+        self.windows = windows
+        self.customers = customersObstacles
+        self.wc = wc
+        self.wyjscie = wyjscie
+        self.obstaclesAll = desksI | desksII | windows | wc | wyjscie | customersObstacles
+
+font_preferences = ["Arial"]
+txt = (create_text("Rozmowa kelnera z klientem:", font_preferences, 20, (0, 0, 0)))
+ordersHeader = (create_text("Historia zamówień: ", font_preferences, 20, (0, 0, 0)))
+
 j = -1
 
 size = 15  ### ile kratek w rzedzie/kolumnie
@@ -40,6 +69,8 @@ for desk in desks:
             customers.add((desk[0] + 0.5, desk[1] - 0.5))
 
 customersObstacles = set([])
+cust = customersList(customers)
+
 for customer in customers:
     customersObstacles.add((int(customer[0]), int(customer[1])))
 
@@ -55,13 +86,12 @@ class Obstacles:
         self.wyjscie = wyjscie
         self.obstaclesAll = desks | windows | wc | wyjscie | customersObstacles
 
-
 obstacles = Obstacles(desks, windows, wc, wyjscie, customersObstacles)
 
 solution = None
 sol_len = 0
 
-screen = pygame.display.set_mode((sizeWindow, sizeWindow))
+screen = pygame.display.set_mode((sizeWindow + 15*m, sizeWindow))
 done = False
 
 kelnerX = int(m * 0)
