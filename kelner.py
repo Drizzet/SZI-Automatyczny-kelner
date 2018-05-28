@@ -24,16 +24,16 @@ def drawTextOrdersSecond(text):
 waiting = True
 przyKliencie = False
 pokazuj = True
-isDone = False
-moving = False
+isDone = False ## czy zebrano już zamówienia ze wszystkich stolików
+moving = False ## czy kelner właśnie idzie?
 ind = 0
-customerNow = (m, m)
+customerNow = (m, m) ## aktualny klient
 text = []
-orders = []
+orders = [] ## lista zamówień ze wszystkich stolików (elementy klasy Order w order.py)
 ordersTextFirst = []
 ordersTextSecond = []
 countCustomers = len(cust)
-visited = []
+visited = [(0,0)]
 
 #desks = Genetic(desks, windows, rooms, size)
 #print(desks)
@@ -133,7 +133,8 @@ while not done:
         pygame.draw.circle(screen, (0, 102, 0), (int(customer[0] * m), int(customer[1] * m)), int(m / 2))
 
     for customer in visited:
-        pygame.draw.circle(screen, (0, 0, 255), (int(customer[0] * m), int(customer[1] * m)), int(m / 2))
+        if visited.index(customer) != 0:
+            pygame.draw.circle(screen, (0, 0, 255), (int(customer[0] * m), int(customer[1] * m)), int(m / 2))
 
     if ind < countCustomers:
         pygame.draw.circle(screen, (255, 0, 0), (int(customerNow[0] * m), int(customerNow[1] * m)), int(m / 2))
@@ -184,12 +185,8 @@ while not done:
         y = startCustomer(ind)
         text = y[0]
         k = getDishName(y[1])
-        if ind < countCustomers:
-            orders.append(Order(visited[-2], k))
-            ordersTextFirst.append(create_text(str(visited[-2]), font_preferences, 16, (0, 0, 0)))
-        else:
-            orders.append(Order(visited[-1], k))
-            ordersTextFirst.append(create_text(str(visited[-1]), font_preferences, 16, (0, 0, 0)))
+        orders.append(Order(visited[-2], k)) ## Dodanie zamówienia do listy "orders"
+        ordersTextFirst.append(create_text(str(visited[-2]), font_preferences, 16, (0, 0, 0)))
         ordersTextSecond.append(create_text(k, font_preferences, 16, (0, 0, 0)))
         przyKliencie = False
         pokazuj = True

@@ -105,11 +105,7 @@ def prepareTestData(talk):
         if x not in doNotChoose:
             choices.append(x)
             labels.append(dishes.index(choices[ind]))
-            if ind == 6:
-                talk.append('raczej nie ' + choices[ind] + ',')
-                i = len(talk) - 1
-            else:
-                talk[i] = talk[i] + ' raczej nie ' + choices[ind] + ','
+            talk.append('raczej nie ' + choices[ind] + ', ')
             data[labels[ind]] = 3
             ind = ind + 1
             xInd = dishes.index(x)
@@ -120,14 +116,10 @@ def prepareTestData(talk):
         if x not in doNotChoose:
             choices.append(x)
             labels.append(dishes.index(choices[ind]))
-            if ind == 9:
+            if ind < 11:
                 talk.append('raczej ' + choices[ind] + ',')
-                i = len(talk) - 1
             else:
-                if ind < 11:
-                    talk[i] = talk[i] + ' raczej ' + choices[ind] + ','
-                else:
-                    talk[i] = talk[i] + ' raczej ' + choices[ind] + '.'
+                talk.append('raczej ' + choices[ind] + '.')
             data[labels[ind]] = 7
             ind = ind + 1
             xInd = dishes.index(x)
