@@ -70,7 +70,7 @@ def getTree(dataset):
 def getDecision(dtree, test_data):
     return dtree.predict(test_data)
 
-def pdfGen(dtree, dataset):
+def pdfGen(dtree, dataset, i):
     dot_data = StringIO()
     tree.export_graphviz(
         decision_tree=dtree,
@@ -82,12 +82,8 @@ def pdfGen(dtree, dataset):
         impurity=True
     )
     graph = pydotplus.graph_from_dot_data(dot_data.getvalue())
-    graph.write_pdf('tree.pdf')
-    print('\nDrzewo w PDF-ie!')
+    graph.write_pdf('data/tree' + str(i) + '.pdf')
 
 csv = parse_csv(open('data/dishes.csv', 'r', encoding='utf-8').read())
 labels = parse_csv(open('data/labels.csv', 'r', encoding='utf-8').read())
 dataset = prepareDataSet(csv, labels)
-
-## test_data = [[10, 10, 4, 4, 4, 4, 4, 4, 10, 10, 0, 10]]
-

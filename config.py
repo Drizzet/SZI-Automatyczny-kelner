@@ -4,11 +4,11 @@ from genetic import *
 
 pygame.init()
 
-def startCustomer():
+def startCustomer(ind):
     text = []
     talks = startConversation()
     test_data = prepareTestData(talks)
-    talkCustomer = talk(talks, test_data)
+    talkCustomer = talk(talks, test_data, ind)
     talkText = talkCustomer[0]
     order = talkCustomer[1]
     for x in talkText:
@@ -75,7 +75,6 @@ for customer in customers:
     customersObstacles.add((int(customer[0]), int(customer[1])))
 
 obstaclesSet = desks | windows | customersObstacles | wc | wyjscie
-
 
 class Obstacles:
     def __init__(self, desks, windows, wc, wyjscie, customersObstacles):

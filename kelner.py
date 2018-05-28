@@ -24,11 +24,15 @@ def drawTextOrdersSecond(text):
 waiting = True
 przyKliencie = False
 pokazuj = True
+isDone = False
+ind = 0
 customerNow = (m, m)
 text = []
 orders = []
 ordersTextFirst = []
 ordersTextSecond = []
+countCustomers = len(cust)
+visited = set([])
 
 #desks = Genetic(desks, windows, rooms, size)
 #print(desks)
@@ -52,15 +56,28 @@ while not done:
                     solution = astar_search(rClick).solution()
                     sol_len = solution.__len__()
 
+    if (j == sol_len) and (isDone is False):
+        sol_len = 0
+        solution = None
+        j = 0
+        ile = 0
+        if (ind < countCustomers):
+            przyKliencie = True
+        else:
+            coordsX = 0
+            coordsY = 13
+            waiterCoordsX = kelnerX // m
+            waiterCoordsY = kelnerY // m
+            rClick3 = PlanRoute((waiterCoordsX, waiterCoordsY, directions[0]), (coordsX, coordsY), obstacles, size)
+            if (astar_search(rClick3) != None):
+                solution = astar_search(rClick3).solution()
+                sol_len = solution.__len__()
+                isDone = True
+
+
     ### Wykonanie akcji
     if j>=0 and j < sol_len and (solution != None):
         x = solution[j]
-        if (j == sol_len - 1):
-            przyKliencie = True
-            sol_len = 0
-            solution = None
-            j = 0
-            ile = 0
         if x == 'TurnRight':
             angle = angle - 90
             surf = pygame.transform.rotate(waiterImg, angle)
@@ -109,7 +126,11 @@ while not done:
     for customer in customers: ## klienci
         pygame.draw.circle(screen, (0, 102, 0), (int(customer[0] * m), int(customer[1] * m)), int(m / 2))
 
-    pygame.draw.circle(screen, (255, 0, 0), (int(customerNow[0] * m), int(customerNow[1] * m)), int(m / 2))
+    for customer in visited:
+        pygame.draw.circle(screen, (0, 0, 255), (int(customer[0] * m), int(customer[1] * m)), int(m / 2))
+
+    if ind < countCustomers:
+        pygame.draw.circle(screen, (255, 0, 0), (int(customerNow[0] * m), int(customerNow[1] * m)), int(m / 2))
 
     screen.blit(doorImg, (weWyX*m, weWyY*m)) ## wejscie/wyjscie
     screen.blit(wcImg, (wcX*m, wcY*m)) ## wc
@@ -123,8 +144,22 @@ while not done:
     if len(cust) != 0: ## podchodzenie do klienta
         if waiting is True and pokazuj is False:
             customerNow = cust.pop()
+            visited.add(customerNow)
             coordsX = int(customerNow[0] - 1.5)
             coordsY = int(customerNow[1] - 0.5)
+            coords = (coordsX, coordsY)
+            if coords in obstaclesSet:
+                coordsX = int(customerNow[0] + 0.5)
+                coordsY = int(customerNow[1] - 0.5)
+                coords = (coordsX, coordsY)
+            if coords in obstaclesSet:
+                coordsX = int(customerNow[0] - 1.5)
+                coordsY = int(customerNow[1] + 1.5)
+                coords = (coordsX, coordsY)
+            if coords in obstaclesSet:
+                coordsX = int(customerNow[0] + 0.5)
+                coordsY = int(customerNow[1] + 1.5)
+                coords = (coordsX, coordsY)
             j = 0
             solution = None
             sol_len = 0
@@ -137,7 +172,8 @@ while not done:
                 sol_len = solution.__len__()
 
     if przyKliencie:
-        y = startCustomer()
+        ind = ind + 1
+        y = startCustomer(ind)
         text = y[0]
         k = getDishName(y[1])
         orders.append(Order(customerNow, k))
@@ -160,3 +196,5 @@ while not done:
     if pokazuj is True:
         time.sleep(3)
         pokazuj = False
+        text = [create_text('', font_preferences, 16, (0, 0, 0))]
+        drawText(text)
