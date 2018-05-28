@@ -69,7 +69,29 @@ for desk in desks:
             customers.add((desk[0] + 0.5, desk[1] - 0.5))
 
 customersObstacles = set([])
-cust = customersList(customers)
+cust = []
+vis = []
+c = customersList(customers)
+n = len(c)
+cInd = 0
+while len(cust) < len(c):
+    r = -1
+    if c[cInd] not in vis:
+        cust.append(c[cInd])
+        vis.append(c[cInd])
+    while r < n - 1:
+        r = r + 1
+        if r == cInd:
+            continue
+        if c[cInd][0] == c[r][0]:
+            if (c[cInd][1] - c[r][1]) == 2 or (c[cInd][1] - c[r][1]) == -2:
+                if c[r] not in vis or c[cInd] not in vis:
+                    cust.append(c[r])
+                    vis.append(c[r])
+                    break
+    cInd = cInd + 1
+
+print(cust)
 
 for customer in customers:
     customersObstacles.add((int(customer[0]), int(customer[1])))

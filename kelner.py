@@ -25,6 +25,7 @@ waiting = True
 przyKliencie = False
 pokazuj = True
 isDone = False
+moving = False
 ind = 0
 customerNow = (m, m)
 text = []
@@ -32,7 +33,7 @@ orders = []
 ordersTextFirst = []
 ordersTextSecond = []
 countCustomers = len(cust)
-visited = set([])
+visited = []
 
 #desks = Genetic(desks, windows, rooms, size)
 #print(desks)
@@ -43,18 +44,19 @@ while not done:
         if event.type == pygame.QUIT:
             done = True
         if event.type == pygame.MOUSEBUTTONUP:
-            pos = pygame.mouse.get_pos()
-            coordsX = pos[0] // m
-            coordsY = pos[1] // m
-            waiterCoordsX = kelnerX // m
-            waiterCoordsY = kelnerY // m
-            if (coordsX, coordsY) not in obstaclesSet:
-                j = 0
-                solution = None
-                rClick = PlanRoute((waiterCoordsX, waiterCoordsY, directions[0]), (coordsX, coordsY), obstacles, size)
-                if (astar_search(rClick) != None):
-                    solution = astar_search(rClick).solution()
-                    sol_len = solution.__len__()
+            if moving is False:
+                pos = pygame.mouse.get_pos()
+                coordsX = pos[0] // m
+                coordsY = pos[1] // m
+                waiterCoordsX = kelnerX // m
+                waiterCoordsY = kelnerY // m
+                if (coordsX, coordsY) not in obstaclesSet:
+                    j = 0
+                    solution = None
+                    rClick = PlanRoute((waiterCoordsX, waiterCoordsY, directions[0]), (coordsX, coordsY, 'N'), obstacles, size)
+                    if (astar_search(rClick) != None):
+                        solution = astar_search(rClick).solution()
+                        sol_len = solution.__len__()
 
     if (j == sol_len) and (isDone is False):
         sol_len = 0
@@ -68,12 +70,15 @@ while not done:
             coordsY = 13
             waiterCoordsX = kelnerX // m
             waiterCoordsY = kelnerY // m
-            rClick3 = PlanRoute((waiterCoordsX, waiterCoordsY, directions[0]), (coordsX, coordsY), obstacles, size)
+            rClick3 = PlanRoute((waiterCoordsX, waiterCoordsY, directions[0]), (coordsX, coordsY, 'N'), obstacles, size)
             if (astar_search(rClick3) != None):
                 solution = astar_search(rClick3).solution()
                 sol_len = solution.__len__()
                 isDone = True
+                moving = True
 
+    if (j == sol_len) and (isDone is True):
+        moving = False
 
     ### Wykonanie akcji
     if j>=0 and j < sol_len and (solution != None):
@@ -100,11 +105,12 @@ while not done:
     else:
         waiting = True
 
-    pressed = pygame.key.get_pressed()
-    if pressed[pygame.K_UP]: kelnerY -= m
-    if pressed[pygame.K_DOWN]: kelnerY += m
-    if pressed[pygame.K_LEFT]: kelnerX -= m
-    if pressed[pygame.K_RIGHT]: kelnerX += m
+    if moving is False:
+        pressed = pygame.key.get_pressed()
+        if pressed[pygame.K_UP]: kelnerY -= m
+        if pressed[pygame.K_DOWN]: kelnerY += m
+        if pressed[pygame.K_LEFT]: kelnerX -= m
+        if pressed[pygame.K_RIGHT]: kelnerX += m
 
     ### Rysowanie
     screen.fill((243, 138, 55))
@@ -143,8 +149,9 @@ while not done:
 
     if len(cust) != 0: ## podchodzenie do klienta
         if waiting is True and pokazuj is False:
+            moving = False
             customerNow = cust.pop()
-            visited.add(customerNow)
+            visited.append(customerNow)
             coordsX = int(customerNow[0] - 1.5)
             coordsY = int(customerNow[1] - 0.5)
             coords = (coordsX, coordsY)
@@ -153,31 +160,38 @@ while not done:
                 coordsY = int(customerNow[1] - 0.5)
                 coords = (coordsX, coordsY)
             if coords in obstaclesSet:
-                coordsX = int(customerNow[0] - 1.5)
-                coordsY = int(customerNow[1] + 1.5)
+                coordsX = int(customerNow[0] + 0.5)
+                coordsY = int(customerNow[1] - 1.5)
                 coords = (coordsX, coordsY)
             if coords in obstaclesSet:
                 coordsX = int(customerNow[0] + 0.5)
-                coordsY = int(customerNow[1] + 1.5)
+                coordsY = int(customerNow[1] + 0.5)
                 coords = (coordsX, coordsY)
             j = 0
             solution = None
             sol_len = 0
             waiterCoordsX = kelnerX // m
             waiterCoordsY = kelnerY // m
-            rClick2 = PlanRoute((waiterCoordsX, waiterCoordsY, directions[0]), (coordsX, coordsY), obstacles, size)
+            rClick2 = PlanRoute((waiterCoordsX, waiterCoordsY, directions[0]), (coordsX, coordsY, 'N'), obstacles, size)
             waiting = False
             if (astar_search(rClick2) != None):
                 solution = astar_search(rClick2).solution()
                 sol_len = solution.__len__()
+                moving = True
 
     if przyKliencie:
         ind = ind + 1
         y = startCustomer(ind)
         text = y[0]
         k = getDishName(y[1])
-        orders.append(Order(customerNow, k))
-        ordersTextFirst.append(create_text(str(customerNow), font_preferences, 16, (0, 0, 0)))
+        if ind < countCustomers:
+            print(visited[-2])
+            orders.append(Order(visited[-2], k))
+            ordersTextFirst.append(create_text(str(visited[-2]), font_preferences, 16, (0, 0, 0)))
+        else:
+            print(visited[-1])
+            orders.append(Order(visited[-1], k))
+            ordersTextFirst.append(create_text(str(visited[-1]), font_preferences, 16, (0, 0, 0)))
         ordersTextSecond.append(create_text(k, font_preferences, 16, (0, 0, 0)))
         przyKliencie = False
         pokazuj = True
@@ -194,7 +208,7 @@ while not done:
     pygame.display.flip()
     clock.tick(10)
     if pokazuj is True:
-        time.sleep(3)
+        time.sleep(0)
         pokazuj = False
         text = [create_text('', font_preferences, 16, (0, 0, 0))]
         drawText(text)

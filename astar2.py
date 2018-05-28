@@ -191,7 +191,7 @@ class PlanRoute():
     def goal_test(self, state):
         """ Dla danego stanu zwraca wartość True jeśli stan jest stanem docelowym, 
             w przeciwnym wypadku zwraca wartość False. """
-        return (state[0] == self.goal[0]) and (state[1] == self.goal[1])
+        return (state[0] == self.goal[0]) and (state[1] == self.goal[1]) and (state[2] == self.goal[2])
 
     def path_cost(self, c, state1, action, state2): ## przyklad - do zmiany sa warunki!
         """ Zwraca koszt przejścia ścieżki ze stanu state1 przez jakąś akcję do stanu state2,
