@@ -106,10 +106,10 @@ def prepareTestData(talk):
             choices.append(x)
             labels.append(dishes.index(choices[ind]))
             if ind == 6:
-                talk.append('niezbyt ' + choices[ind] + ',')
+                talk.append('raczej nie ' + choices[ind] + ',')
                 i = len(talk) - 1
             else:
-                talk[i] = talk[i] + ' niezbyt ' + choices[ind] + ','
+                talk[i] = talk[i] + ' raczej nie ' + choices[ind] + ','
             data[labels[ind]] = 3
             ind = ind + 1
             xInd = dishes.index(x)
