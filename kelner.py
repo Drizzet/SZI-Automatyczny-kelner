@@ -185,11 +185,9 @@ while not done:
         text = y[0]
         k = getDishName(y[1])
         if ind < countCustomers:
-            print(visited[-2])
             orders.append(Order(visited[-2], k))
             ordersTextFirst.append(create_text(str(visited[-2]), font_preferences, 16, (0, 0, 0)))
         else:
-            print(visited[-1])
             orders.append(Order(visited[-1], k))
             ordersTextFirst.append(create_text(str(visited[-1]), font_preferences, 16, (0, 0, 0)))
         ordersTextSecond.append(create_text(k, font_preferences, 16, (0, 0, 0)))
@@ -208,7 +206,7 @@ while not done:
     pygame.display.flip()
     clock.tick(10)
     if pokazuj is True:
-        time.sleep(0)
+        time.sleep(3)
         pokazuj = False
         text = [create_text('', font_preferences, 16, (0, 0, 0))]
         drawText(text)

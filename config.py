@@ -91,8 +91,6 @@ while len(cust) < len(c):
                     break
     cInd = cInd + 1
 
-print(cust)
-
 for customer in customers:
     customersObstacles.add((int(customer[0]), int(customer[1])))
 
