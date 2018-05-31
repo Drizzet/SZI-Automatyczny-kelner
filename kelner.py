@@ -185,6 +185,7 @@ while not done:
         y = startCustomer(ind)
         text = y[0]
         k = getDishName(y[1])
+        print(k)
         orders.append(Order(visited[-2], k)) ## Dodanie zamówienia do listy "orders"
         ordersTextFirst.append(create_text(str(visited[-2]), font_preferences, 16, (0, 0, 0)))
         ordersTextSecond.append(create_text(k, font_preferences, 16, (0, 0, 0)))
@@ -203,7 +204,10 @@ while not done:
     pygame.display.flip()
     clock.tick(10)
     if pokazuj is True:
-        time.sleep(3)
+        if len(cust) < countCustomers:
+            time.sleep(3)
+        else:
+            time.sleep(1)
         pokazuj = False
         text = [create_text('', font_preferences, 16, (0, 0, 0))]
         drawText(text)

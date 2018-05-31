@@ -82,7 +82,8 @@ def pdfGen(dtree, dataset, i):
         impurity=True
     )
     graph = pydotplus.graph_from_dot_data(dot_data.getvalue())
-    graph.write_pdf('data/tree' + str(i) + '.pdf')
+    ##graph.write_pdf('data/tree' + str(i) + '.pdf')
+    ##graph.write_pdf('data/tree.pdf')
 
 csv = parse_csv(open('data/dishes.csv', 'r', encoding='utf-8').read())
 labels = parse_csv(open('data/labels.csv', 'r', encoding='utf-8').read())

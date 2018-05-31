@@ -80,7 +80,7 @@ def prepareTestData(talk):
                 i = len(talk) - 1
             else:
                 talk[i] = talk[i] + ' ' + choices[ind] + ','
-            data[labels[ind]] = 10.5
+            data[labels[ind]] = 10
             ind = ind + 1
             xInd = dishes.index(x)
             doNotChoose.append(dishes[xInd])
@@ -95,7 +95,7 @@ def prepareTestData(talk):
                 i = len(talk) - 1
             else:
                 talk[i] = talk[i] + ' nie ' + choices[ind] + ','
-            data[labels[ind]] = 0.5
+            data[labels[ind]] = 0
             ind = ind + 1
             xInd = dishes.index(x)
             doNotChoose.append(dishes[xInd])
