@@ -59,14 +59,19 @@ windows = set([(14, 2), (14, 3), (14, 4), (14, 6), (14, 7),
                (14, 8), (14, 10), (14, 11), (14, 12)])
 
 ### Klienci
-desks = Genetic(desks, windows, rooms, size)
+desks = Genetic(windows, rooms)
 customers = set([])
 for desk in desks:
-    for desk2 in desks:
-        if(desk2 != desk[0] and desk2 != desk[1] + 1 ):
+        if(desk[0], desk[1] + 1) not in desks:
             customers.add((desk[0] + 0.5, desk[1] + 1.5))
-        if (desk2 != desk[0] and desk2 != desk[1] - 1):
+        if (desk[0], desk[1] - 1) not in desks:
             customers.add((desk[0] + 0.5, desk[1] - 0.5))
+        # if(desk[0] + 1, desk[1]) not in desks:
+        #     if (desk[0] + 1.5, desk[1] + 0.5) not in windows:
+        #         customers.add((desk[0] + 1.5, desk[1] + 0.5))
+        # if (desk[0] - 1, desk[1]) not in desks:
+        #     if (desk[0] - 0.5, desk[1] + 0.5) not in rooms:
+        #         customers.add((desk[0] - 0.5, desk[1] + 0.5))
 
 customersObstacles = set([])
 cust = []

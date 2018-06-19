@@ -1,80 +1,89 @@
 from numpy import random
+from cmath import *
 
 
-
-def Genetic(tables, windows, rooms, size):
+def Genetic(windows, rooms):
+    population = initPopulation(10)
     iteration = 0
-    tables = list(tables)
-    while(iteration <=250):
-        print(iteration)
-        #newtables = list([])
-        optiontables = [ tables[i] for i in range(len(tables))]
+    population.sort(key=lambda x: -fitness(x, windows, rooms))
+    while (iteration <= 1000):
+        newPopulation = []
+        for x in range(0, len(population), 2):
+            parent1 = population[x]
+            parent2 = population[x + 1]
+            child1, child2 = crossover(parent1, parent2)
+            mutation(child1)
+            mutation(child2)
+            newPopulation.append(child1)
+            newPopulation.append(child2)
+        for t in newPopulation:
+            if (t not in population):
+                population.append(t)
+        population.sort(key=lambda x: -fitness(x, windows, rooms))
+        best = population[0]
+        print(iteration,fitness(best,windows,rooms),best)
+        delete = len(newPopulation)
+        del population[delete:]
+        iteration = iteration + 1;
 
-        for i in range(len(optiontables)):
-            flag = False
-            optiontables[i] = (random.randint(1,size-2),random.randint(0,size-1))
-            #optiontables[i] = (tables[i][0]+random.randint(-1,1),tables[i][1]+random.randint(-1,1))
-            print(Fitness(optiontables,windows,rooms), Fitness(tables,windows,rooms))
-            if(Fitness(optiontables,windows,rooms) > Fitness(tables,windows,rooms)):
-                for j in range(len(optiontables)):
-                    if(optiontables[i]==tables[j] or optiontables[i][1]==0 or optiontables[i][1]==14 or optiontables[i][0]==0 or optiontables[i][0]==14):
-                        flag = True
-                if(flag != True):
-                    tables[i] = optiontables[i]
-                    print("zmieniam",tables[i],flag,tables,optiontables)
-            else:
-                optiontables[i] = tables[i]
-                print("zostawiam",tables,optiontables)
-        # for oldtable in tables:
-        #     #table = (oldtable[0]+random.randint(-1,1),oldtable[1]+random.randint(-1,1))
-        #     table = (random.randint(1,size-2),random.randint(0,size-1))
-        #     newtables.add(table)
-        # while(len(newtables)!=len(tables)):
-        #     table = (random.randint(1, size - 2), random.randint(0, size - 1))
-        #     newtables.add(table)
-        #
-        # fitness = Fitness(tables,windows,rooms)
-        # newfitness = Fitness(newtables,windows,rooms)
-        # print(tables, fitness,newtables, newfitness)
-        # if(newfitness>fitness):
-        #    tables = newtables
-        iteration += 1
-    return set(tables)
+    return set(best)
 
-def Fitness(tables, windows, rooms):
+
+def mutation(tables):
+    if (random.randint(0, 100) <= 10):
+        i = random.randint(1, 14)
+        j = random.randint(1, 14)
+        p = random.randint(1, 9)
+        tables[p] = (i, j)
+
+
+def crossover(tables1, tables2):
+    point = random.randint(1, 8)
+    c = tables1[:point]
+    a = tables2[point:]
+    for i in a:
+            c.append(i)
+    d = tables2[:point]
+    b = tables1[point:]
+    for i in b:
+            d.append(i)
+    return (c, d)
+
+
+def initPopulation(n):
+    population = []
+    for i in range(n):
+        individual = [(random.randint(1, 14),random.randint(1, 14)) for a in range(10)]
+        if individual not in population:
+            population.append(individual)
+    return population
+
+
+def fitness(tables, windows, rooms):
     fitness = 0
     for table in tables:
+        o = sqrt(pow((table[0] - 7), 2) + pow((table[1] - 7), 2))
+        fitness -= o
         for window in windows:
-            if(table == window or table == (window[0],window[1]-1) or table == (window[0],window[1]+1)):
-                fitness -= 100
-            for i in range(-1,1):
-                for j in range(-1,1):
-                    if(table == (window[0]+i,window[1]+j)):
-                        fitness += 20
-
-        for room in rooms:
-            if(table == room or table == (room[0],room[1]-1) or table == (room[0],room[1]+1)):
-                fitness -= 100
-            for i in range(-2,2):
-                for j in range(-2,2):
-                    if(table == (room[0]+i,room[1]+j)):
-                        fitness -= 15
-
-
+            o = sqrt(pow((table[0] - window[0]), 2) + pow((table[1] - window[1]), 2))
+            fitness -= o*0.25
+       # for room in rooms:
+            #o = sqrt(pow((table[0] - room[0]), 2) + pow((table[1] - room[1]), 2))
+            #if round(o.real) <5:
+                #fitness += o*2
+        count = 0
         for table2 in tables:
-            if (table != table2):
-                for i in range(-2,2):
-                    for j in range(-2,2):
-                        if (i == 0):
-                            if (table == (table2[0] + i, table2[1] + j)):
-                                fitness -= 50
-                        else:
-                            if (j == 0):
-                                if (table == (table2[0] + i, table2[1] + j)):
-                                    fitness -= 1
-                            else:
-                                fitness -= 10
+            o = (sqrt(pow((table[0] - table2[0]), 2) + pow((table[1] - table2[1]), 2)))
+            if round(o.real) < 4:
+                fitness -= 10 * o
             else:
-                fitness -= 70
-
-    return fitness
+                if round(o.real) < 10:
+                    fitness += o * 4
+            if(o==0):
+                fitness -= 100
+            if(table[0]==table2[0] or table[1]==table2[1]):
+                count +=1
+            if(table[0] - table2[0]==1 and table[1] - table2[1]==1):
+                fitness -=25
+        fitness -= count*5
+    return round(fitness.real)
