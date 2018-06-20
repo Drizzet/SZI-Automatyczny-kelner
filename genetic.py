@@ -6,11 +6,17 @@ def Genetic(windows, rooms):
     population = initPopulation(10)
     iteration = 0
     population.sort(key=lambda x: -fitness(x, windows, rooms))
-    while (iteration <= 1000):
+    while (iteration <= 500):
         newPopulation = []
         for x in range(0, len(population), 2):
             parent1 = population[x]
-            parent2 = population[x + 1]
+            v = x+1
+            if(random.randint(0, 10) > 5):
+                v = random.randint(1, 10)
+                while v==x:
+                    v=random.randint(1,10)
+
+            parent2 = population[v]
             child1, child2 = crossover(parent1, parent2)
             mutation(child1)
             mutation(child2)
@@ -24,13 +30,15 @@ def Genetic(windows, rooms):
         print(iteration,fitness(best,windows,rooms),best)
         delete = len(newPopulation)
         del population[delete:]
-        iteration = iteration + 1;
+        iteration = iteration + 1
+        if(fitness(best,windows,rooms)>1200):
+            iteration = 1001
 
     return set(best)
 
 
 def mutation(tables):
-    if (random.randint(0, 100) <= 10):
+    if (random.randint(0, 100) <= 15):
         i = random.randint(1, 14)
         j = random.randint(1, 14)
         p = random.randint(1, 9)
@@ -62,22 +70,22 @@ def initPopulation(n):
 def fitness(tables, windows, rooms):
     fitness = 0
     for table in tables:
-        o = sqrt(pow((table[0] - 7), 2) + pow((table[1] - 7), 2))
+        o = sqrt(pow((table[0] - 8), 2) + pow((table[1] - 7), 2))
         fitness -= o
         for window in windows:
             o = sqrt(pow((table[0] - window[0]), 2) + pow((table[1] - window[1]), 2))
-            fitness -= o*0.25
-       # for room in rooms:
-            #o = sqrt(pow((table[0] - room[0]), 2) + pow((table[1] - room[1]), 2))
-            #if round(o.real) <5:
-                #fitness += o*2
+            fitness -= o*0.5
+        for room in rooms:
+            o = sqrt(pow((table[0] - room[0]), 2) + pow((table[1] - room[1]), 2))
+            if round(o.real) >5:
+                fitness += 5
         count = 0
         for table2 in tables:
             o = (sqrt(pow((table[0] - table2[0]), 2) + pow((table[1] - table2[1]), 2)))
-            if round(o.real) < 4:
+            if round(o.real) < 3:
                 fitness -= 10 * o
             else:
-                if round(o.real) < 10:
+                if round(o.real) <= 10:
                     fitness += o * 4
             if(o==0):
                 fitness -= 100

@@ -66,12 +66,12 @@ for desk in desks:
             customers.add((desk[0] + 0.5, desk[1] + 1.5))
         if (desk[0], desk[1] - 1) not in desks:
             customers.add((desk[0] + 0.5, desk[1] - 0.5))
-        # if(desk[0] + 1, desk[1]) not in desks:
-        #     if (desk[0] + 1.5, desk[1] + 0.5) not in windows:
-        #         customers.add((desk[0] + 1.5, desk[1] + 0.5))
-        # if (desk[0] - 1, desk[1]) not in desks:
-        #     if (desk[0] - 0.5, desk[1] + 0.5) not in rooms:
-        #         customers.add((desk[0] - 0.5, desk[1] + 0.5))
+        if(desk[0] + 1, desk[1]) not in desks:
+            if (desk[0] + 1, desk[1]) not in windows:
+                customers.add((desk[0] + 1.5, desk[1] + 0.5))
+        if (desk[0] - 1, desk[1]) not in desks:
+            if (desk[0] -1, desk[1]) not in rooms:
+                customers.add((desk[0] - 0.5, desk[1] + 0.5))
 
 customersObstacles = set([])
 cust = []
