@@ -1,6 +1,8 @@
 from config import *
 from astar2 import *
+from test import *
 import time
+import sys
 from genetic import *
 
 def drawText(text):
@@ -34,6 +36,13 @@ ordersTextFirst = []
 ordersTextSecond = []
 countCustomers = len(cust)
 visited = [(0,0)]
+BOCIAN = False
+THINKING = True
+GoMove = False
+GoToX = 0;
+GoToY = 0;
+doszedl = True
+AtKitchen = False
 
 #desks = Genetic(desks, windows, rooms, size)
 #print(desks)
@@ -66,8 +75,8 @@ while not done:
         if (ind < countCustomers):
             przyKliencie = True
         else:
-            coordsX = 0
-            coordsY = 13
+            coordsX = 1
+            coordsY = 11
             waiterCoordsX = kelnerX // m
             waiterCoordsY = kelnerY // m
             rClick3 = PlanRoute((waiterCoordsX, waiterCoordsY, directions[0]), (coordsX, coordsY, 'N'), obstacles, size)
@@ -77,8 +86,15 @@ while not done:
                 isDone = True
                 moving = True
 
+
+
     if (j == sol_len) and (isDone is True):
         moving = False
+        sol_len = 0
+        solution = None
+        BOCIAN = True
+        doszedl = True
+        AtKitchen = True
 
     ### Wykonanie akcji
     if j>=0 and j < sol_len and (solution != None):
@@ -180,6 +196,7 @@ while not done:
                 sol_len = solution.__len__()
                 moving = True
 
+
     if przyKliencie:
         ind = ind + 1
         y = startCustomer(ind)
@@ -192,6 +209,70 @@ while not done:
         przyKliencie = False
         pokazuj = True
 
+
+    if BOCIAN and THINKING and doszedl:
+        pic_path = input("Podaj sciezke do zdjecia: ")
+        answer = DetectPic(pic_path)
+        print(answer)
+        THINKING = False
+
+    if BOCIAN and not THINKING:
+        for order in orders:
+            if answer == order.order:
+                goToX = order.customer[0]
+                goToY = order.customer[1]
+                if order in orders:
+                    orders.remove(order)
+                GoMove = True
+                answer = ""
+                break
+            else:
+                GoMove = False
+                THINKING = True
+
+
+
+
+
+    if BOCIAN and GoMove:
+        coordsX = goToX - 1.5
+        coordsY = goToY - 0.5
+        coords = (coordsX, coordsY)
+        if coords in obstaclesSet:
+            coordsX = goToX + 0.5
+            coordsY = goToY - 0.5
+            coords = (coordsX, coordsY)
+        if coords in obstaclesSet:
+            coordsX = goToY + 0.5
+            coordsY = goToY - 1.5
+            coords = (coordsX, coordsY)
+        if coords in obstaclesSet:
+            coordsX = goToX + 0.5
+            coordsY = goToY + 0.5
+            coords = (coordsX, coordsY)
+        j = 0
+        solution = None
+        sol_len = 0
+        waiterCoordsX = kelnerX // m
+        waiterCoordsY = kelnerY // m
+        rClick4 = PlanRoute((waiterCoordsX, waiterCoordsY, directions[0]), (coordsX, coordsY, 'N'), obstacles,
+                            size)
+        if (astar_search(rClick4) != None):
+            solution = astar_search(rClick4).solution()
+            sol_len = solution.__len__()
+            isDone = True
+            moving = True
+        print(coordsX,coordsY)
+        print(solution)
+        GoMove = False
+        doszedl = False
+
+    if not doszedl and BOCIAN:
+        if (waiterCoordsX == coordsX) and (waiterCoordsY == coordsY):
+            AtKitchen = False
+            doszedl = True
+
+
     if len(text) != 0:
         drawText(text)
 
@@ -201,13 +282,15 @@ while not done:
     if len(ordersTextSecond) != 0:
         drawTextOrdersSecond(ordersTextSecond)
 
+
     pygame.display.flip()
     clock.tick(10)
     if pokazuj is True:
         if len(cust) < countCustomers:
-            time.sleep(3)
+            time.sleep(2)
         else:
             time.sleep(1)
         pokazuj = False
         text = [create_text('', font_preferences, 16, (0, 0, 0))]
         drawText(text)
+
